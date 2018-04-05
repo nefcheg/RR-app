@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import _ from 'lodash'
+
 
 import '../../css/App.css'
 
@@ -10,6 +12,7 @@ import ArticleList from '../components/ArticleList'
 import TagList from '../components/TagList'
 import LiveSearch from '../components/LiveSearch'
 import Preloader from '../components/Preloader'
+import ErrorMessage from '../components/ErrorMessage'
 
 
 export class ArticlesListPage extends Component {
@@ -18,7 +21,6 @@ export class ArticlesListPage extends Component {
   //получение полного списка тегов
   getAllTags = (data) => {
     let tagsArray = [];
-
     data.forEach((current) => {
       current.tags.forEach((tag) => {
         (tagsArray.indexOf(tag) === -1) ? (tagsArray.push(tag)) : null;
@@ -27,8 +29,6 @@ export class ArticlesListPage extends Component {
 
     return tagsArray;
   };
-
-
 
   //Получение списка отфильтрованных статей
   getFilteredArticles = (tag, string) => {
@@ -60,9 +60,10 @@ export class ArticlesListPage extends Component {
 
   //загрузка данных
   componentWillMount() {
-
     if (this.props.dataObject.length === 0) {
-      this.actions.getData();
+      this.actions.getData().then(() => {
+        this.actions.getTagList(this.getAllTags(this.props.dataObject))
+      });
     }
   };
 
@@ -72,17 +73,18 @@ export class ArticlesListPage extends Component {
     return (
       <div className="container">
         <LiveSearch dataChange={this.inputChange} dataValue={this.props.liveSearchString} />
-        <TagList dataTagList={this.getAllTags(this.props.dataObject)} dataSetTag={this.tagClick} dataActiveTag={this.props.currentTag} isOuter={true}/>
+        <TagList dataTagList={this.props.tagList} dataSetTag={this.tagClick} dataActiveTag={this.props.currentTag} isOuter={true}/>
         <ArticleList data={this.getFilteredArticles(this.props.currentTag, this.props.liveSearchString)} dataActiveTag={this.props.currentTag} dataClick={this.tagClick}/>
       </div>
     )
   };
 
   render() {
-    console.log(this.props);
+
     return (
         <div className="App">
           { this.props.isWaiting && <Preloader /> }
+          { this.props.error && <ErrorMessage /> }
           { !this.props.isWaiting && this.getPageJSX() }
         </div>
     );
@@ -95,7 +97,8 @@ function mapStateToProps (state) {
     liveSearchString: state.articleList.liveSearchString,
     dataObject: state.articleList.dataObject,
     filteredData: state.articleList.filteredData,
-    isWaiting: state.articleList.isWaiting
+    isWaiting: state.articleList.isWaiting,
+    tagList: state.articleList.tagList
   }
 }
 

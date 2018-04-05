@@ -1,4 +1,4 @@
-import {SET_TAG , SET_LIVESEARCH, SET_DATA, GET_DATA_REQUEST, GET_DATA_SUCCESS} from "../constants";
+import {SET_TAG, SET_LIVESEARCH, GET_DATA_REQUEST, GET_DATA_SUCCESS, GET_DATA_FAIL, GET_TAGLIST} from "../constants";
 import importData from "../GetData"
 
 export const setTag = (tag) => ({
@@ -11,9 +11,9 @@ export const setLivesearch = (liveSearchString) => ({
   payload: liveSearchString
 });
 
-export const setData = (data) => ({
-  type: SET_DATA,
-  payload: data
+export const getTagList = (tagList) => ({
+  type: GET_TAGLIST,
+  payload: tagList
 });
 
 export function getData() {
@@ -22,11 +22,16 @@ export function getData() {
       type: GET_DATA_REQUEST,
     });
 
-    importData().then((data) => {
+    return importData().then((data) => {
       dispatch({
         type: GET_DATA_SUCCESS,
         payload: data
       });
+    }).catch((error) => {
+      dispatch({
+        type: GET_DATA_FAIL,
+        payload: error
+      })
     })
   }
 }

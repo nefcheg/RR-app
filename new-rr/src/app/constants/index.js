@@ -1,7 +1,13 @@
 export const SET_TAG = "SET_TAG";
 export const SET_LIVESEARCH = "SET_LIVESEARCH";
-export const SET_DATA = "SET_DATA";
+
 export const GET_DATA_REQUEST = "GET_DATA_REQUEST";
 export const GET_DATA_SUCCESS = "GET_DATA_SUCCESS";
+export const GET_DATA_FAIL = "GET_DATA_FAIL";
 
-export const SET_ARTICLE = "SET_ARTICLE";
+export const GET_TAGLIST = "GET_TAGLIST";
+
+export const GET_ARTICLE_REQUEST = "GET_ARTICLE_REQUEST";
+export const GET_ARTICLE_SUCCESS = "GET_ARTICLE_SUCCESS";
+export const GET_ARTICLE_FAIL = "GET_ARTICLE_FAIL";
+

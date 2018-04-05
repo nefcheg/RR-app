@@ -1,36 +1,25 @@
 import React, { Component } from 'react';
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
+import _ from 'lodash';
 
 import '../../css/App.css';
 
 import * as articleItemActions from "../actions/ArticleItemActions";
 
 import Preloader from '../components/Preloader'
-import getData from '../GetData'
+import ErrorMessage from '../components/ErrorMessage'
 
 
 class ArticlePage extends Component {
-  state = {
-    isWaiting: false
-  };
 
-  articleId = this.props.match.params.id;
+  articleId = +this.props.match.params.id;
   actions = this.props.articleItemActions;
 
-  componentDidMount() {
-    this.setState({ isWaiting: true });
-
-    getData().then((data) => {
-        data.forEach((current) => {
-          if (current.id === +this.articleId) {
-            this.actions.setArticle(current);
-            return false;
-          }
-        });
-
-        this.setState({ isWaiting: false });
-      }).catch(alert);
+  componentWillMount() {
+    if (_.isEmpty(this.props.currentArticle) || !(this.props.currentArticle === this.articleId)) {
+      this.actions.getArticle(this.articleId);
+    }
   };
 
   getPageJSX = () => {
@@ -43,10 +32,12 @@ class ArticlePage extends Component {
   };
 
   render() {
+    console.log(this.props);
     return (
       <div>
-        { (this.state.isWaiting) && <Preloader /> }
-        { (!this.state.isWaiting) && this.getPageJSX() }
+        { (this.props.isWaiting) && <Preloader /> }
+        { (this.props.error) && <ErrorMessage /> }
+        { (!this.props.isWaiting) && (!this.props.error) && this.getPageJSX() }
       </div>
     );
   }
@@ -55,6 +46,8 @@ class ArticlePage extends Component {
 function mapStateToProps (state) {
   return {
     currentArticle: state.articleItem.currentArticle,
+    isWaiting: state.articleItem.isWaiting,
+    error: state.articleItem.error
   }
 }
 

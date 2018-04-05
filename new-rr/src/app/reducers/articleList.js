@@ -1,11 +1,13 @@
-import {SET_DATA, SET_LIVESEARCH, SET_TAG, GET_DATA_SUCCESS, GET_DATA_REQUEST} from "../constants";
+import {SET_LIVESEARCH, SET_TAG, GET_DATA_SUCCESS, GET_DATA_REQUEST, GET_DATA_FAIL, GET_TAGLIST} from "../constants";
 
 const initialState = {
   currentTag: null,
+  tagList: [],
   liveSearchString: "",
   dataObject: [],
   filteredData: [],
-  isWaiting: false
+  isWaiting: false,
+  error: false
 };
 
 export const articleList = (state = initialState, action) => {
@@ -18,16 +20,20 @@ export const articleList = (state = initialState, action) => {
       return {...state, liveSearchString: action.payload};
     }
 
-    case SET_DATA: {
-      return {...state, dataObject: action.payload}
-    }
-
     case GET_DATA_REQUEST: {
       return {...state, isWaiting: true}
     }
 
     case GET_DATA_SUCCESS: {
-      return {...state, isWaiting: false, dataObject: action.payload}
+      return {...state, isWaiting: false, error: false,  dataObject: action.payload}
+    }
+
+    case GET_DATA_FAIL: {
+      return {...state, isWaiting: false, error: true}
+    }
+
+    case GET_TAGLIST: {
+      return {...state, tagList: action.payload}
     }
 
     default: return state;

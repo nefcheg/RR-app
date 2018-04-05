@@ -1,8 +1,22 @@
-import {SET_ARTICLE} from "../constants";
+import {GET_ARTICLE_REQUEST, GET_ARTICLE_SUCCESS, GET_ARTICLE_FAIL} from "../constants";
+import { importArticle }  from '../GetData'
 
-export const setArticle = (article) => {
-  return {
-    type: SET_ARTICLE,
-    payload: article
+export function getArticle(id) {
+  return (dispatch) => {
+    dispatch({
+      type: GET_ARTICLE_REQUEST,
+    });
+
+    return importArticle(id).then((data) => {
+      dispatch({
+        type: GET_ARTICLE_SUCCESS,
+        payload: data
+      });
+    }).catch((error) => {
+        dispatch({
+          type: GET_ARTICLE_FAIL,
+          payload: error
+        })
+      });
   }
-};
+}
