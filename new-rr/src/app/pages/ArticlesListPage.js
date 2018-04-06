@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import _ from 'lodash'
 
-
 import '../../css/App.css'
 
 import * as articleListActions from '../actions/ArticleListActions'
@@ -20,14 +19,7 @@ export class ArticlesListPage extends Component {
 
   //получение полного списка тегов
   getAllTags = (data) => {
-    let tagsArray = [];
-    data.forEach((current) => {
-      current.tags.forEach((tag) => {
-        (tagsArray.indexOf(tag) === -1) ? (tagsArray.push(tag)) : null;
-      })
-    });
-
-    return tagsArray;
+    return _.uniq([].concat(...(_.map(data, 'tags'))));
   };
 
   //Получение списка отфильтрованных статей
